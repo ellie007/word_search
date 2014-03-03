@@ -1,8 +1,7 @@
 class Solver
 
   def solve(grid_of_letters, words)
-    sorted_words = words.sort_by! { |word| word.length }
-    sorted_words = sorted_words.sort! { |a, b| b <=> a }
+    sorted_words = words.sort_by! { |word| word.length }.reverse!
 
     mutated_grid_of_letters = ""
     index = 0
@@ -10,8 +9,8 @@ class Solver
     grid_of_letters.split("\n").each do |row|
       sorted_words.each do |word|
         if row.include?(word)
-          upcased_letters = row[row.rindex(word)..row.rindex(word)+word.length - 1].upcase!
-          row[row.rindex(word)..row.rindex(word)+word.length - 1] = upcased_letters
+          upcased_letters = row[row.index(word)..row.index(word)+word.length - 1].upcase!
+          row[row.index(word)..row.index(word)+word.length - 1] = upcased_letters
         end
       end
       row.split("").each { |letter| row[letter] = "." if letter != letter.upcase }
@@ -21,13 +20,21 @@ class Solver
     mutated_grid_of_letters.downcase!
   end
 
-end
+  def vertical(grid_of_letters)
+    grid = []
+    grid_of_letters.split("\n").each do |row|
+      row.split("")
+      grid.push(row)
+    end
+    return grid
+    #return split_grid
+  end
 
-#puts solve("abcde\nfghij\nklmno\npqrst\nuvwxy\n", "abc")
+end
 
 puts Solver.new.solve("abcde\nfghij\nklmno\npqrst\nuvwxy\n", ["abc", "fgh", "klm", "pqr", "uvw"])
 
-#puts solve('abbcde', 'bcd') # == '..bcd.'
+#puts Solver.new.vertical("abcde\nfghij\nklmno\npqrst\nuvwxy\n")
 
 # def remove_unused_letters(row, word)
 #  index = 0
