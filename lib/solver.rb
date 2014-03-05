@@ -1,81 +1,65 @@
 class Solver
 
-  def horiztonal(grid_of_letters, words)
-    mutated_grid_of_letters = ""
-    index = 0
+  def initialize(grid_of_letters, words)
+    @solution = ''
+    @grid_of_letters = grid_of_letters
+    @words = words
+  end
 
-    grid_of_letters.split("\n").each do |row|
-      words.each do |word|
-        if row.include?(word)
-          upcased_letters = row[row.index(word)..row.index(word)+word.length - 1].upcase!
-          row[row.index(word)..row.index(word)+word.length - 1] = upcased_letters
-        end
-      end
-      mutated_grid_of_letters << grid_of_letters.split("\n")[index] = row + "\n"
+
+  def horizontal
+    index = 0
+    @solution = @grid_of_letters.split("\n").each do |row|
+      find_words_in_row(row)
       index += 1
-    end
-    mutated_grid_of_letters
+    end.join("\n")
   end
 
 
-  def vertical(grid_of_letters, words)
-    mutated_grid_of_letters = ""
+  def vertical
     index = 0
-
-    transpose(grid_of_letters).each do |row|
-      words.each do |word|
-        if row.include?(word)
-          upcased_letters = row[row.index(word)..row.index(word)+word.length - 1].upcase!
-          row[row.index(word)..row.index(word)+word.length - 1] = upcased_letters
-        end
-      end
-      mutated_grid_of_letters << grid_of_letters.split("\n")[index] = row + "\n"
+    @solution = transpose.split("\n").each do |row|
+      find_words_in_row(row)
       index += 1
-    end
-    transpose(mutated_grid_of_letters).join("\n")
+    end.join("\n")
   end
 
 
-  def transpose(grid_of_letters)
-    set_index = 0
-    sub_index = 0
-    greater_array = []
-
-    while sub_index < grid_of_letters.split("\n").length do
-      row = ""
-      while set_index < grid_of_letters.split("\n").length do
-        row << grid_of_letters.split("\n")[set_index][sub_index]
-        greater_array << row
-        set_index += 1
+  def find_words_in_row(row)
+    @words.each do |word|
+      start_index = row.index(word)
+      if start_index
+        upcased_letters = row[start_index..start_index + word.length - 1].upcase!
+        row[start_index..start_index + word.length - 1] = upcased_letters
       end
-      row = ""
-      set_index = 0
-      sub_index += 1
     end
-    greater_array.uniq!
+    row + "\n"
   end
 
 
-  def solve(grid_of_letters, words)
-    mutated_grid_of_letters = ""
-    index = 0
+  def transpose
+    split_grid = @solution.split("\n").map { |row| row.split("") }
+    split_grid.transpose.map(&:join).join("\n")
+  end
 
-    horizontal_eval = horiztonal(grid_of_letters, words)
 
-    vertical(horizontal_eval, words).split("\n").each do |row|
+  def solve
+    horizontal
+    vertical
+
+    @solution = @solution.split("\n").each do |row|
       row.split("").each { |letter| row[letter] = "." if letter != letter.upcase }
-      mutated_grid_of_letters << grid_of_letters.split("\n")[index] = row + ("\n")
-      index += 1
+      #@grid_of_letters.split("\n")[index] = row + ("\n")
     end
-    mutated_grid_of_letters.downcase
+    @solution.join("\n")
   end
 
 
 end
 
-print Solver.new.solve("abcde\nfghij\nklmno\npqrst\nuvwxy\n", ["abc", "fgh", "mrw", "nsx", "oty"])
+print Solver.new("abcde\nfghij\nklmno\npqrst\nuvwxy\n", ["abc", "oty"]).solve
 
-#print Solver.new.transpose_grid("abcde\nfghij\nklmno\npqrst\nuvwxy\n")
+#puts Solver.new.transpose("abcde\nfghij\nklmno\npqrst\nuvwxy\n")
 
 #print Solver.new.vertical("abcde\nfghij\nklmno\npqrst\nuvwxy\n", ["mrw", "nsx", "oty"])
 
