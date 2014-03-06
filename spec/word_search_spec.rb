@@ -2,7 +2,7 @@ require "solver"
 
 describe Solver do
 
-  let(:grid) { Solver.new("abc\ndef", ["ab", "cf"]) }
+  let(:grid) { Solver.new("abc\ndef", ["ab", "cf", "ed"]) }
 
   it "should evaluate the grid horizontally" do
     grid.horizontal.should == "ABc\ndef"
@@ -12,16 +12,25 @@ describe Solver do
     grid.vertical.should == "abC\ndeF"
   end
 
-  it "transpose a vertical" do
+  it "should vertically transpose the grid" do
+    grid.vertical_transpose("abc\ndef").should == "ad\nbe\ncf"
+  end
+
+  it "should evaluate the grid backwards" do
+    grid.backward.should == "abc\nDEf"
+  end
+
+  it "should backwardly transpose grid" do
+    grid.backward_transpose("abc\ndef").should == "cba\nfed"
+  end
+
+  it "finds a word in a single row" do
     grid.find_words_in_row("abc").should == "ABc\n"
   end
 
-  it "should transpose the grid" do
-    grid.transpose("abc\ndef").should == "ad\nbe\ncf"
-  end
-
-  it "should use the solve method" do
-    grid.solve.should == "ABC\n..F"
+  it "should solve any problem" do
+    grid.solve.should == "ABC\nDEF"
   end
 
 end
+
